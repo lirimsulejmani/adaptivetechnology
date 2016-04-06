@@ -1,0 +1,78 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - WCAG Tool</title>
+    <!-- Bootstrap Core CSS -->
+    <link href="~/Content/" rel="stylesheet">
+    <link href="~/Content/bootstrap.css" rel="stylesheet" type="text/css" />
+    <!-- Custom CSS -->
+    <link href="~/Content/landing-page.css" rel="stylesheet">
+    <!-- Custom Fonts -->
+    <link href="~/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href="http://fonts.googleapis.com/css?family=Lato:300,400,700,300italic,400italic,700italic" rel="stylesheet" type="text/css">
+    <script src="~/Scripts/jquery-1.10.2.min.js"></script>
+    <script src="~/Scripts/bootstrap.min.js"></script>
+</head>
+<body>
+    <nav class="navbar navbar-default navbar-fixed-top topnav" role="navigation">
+        <div class="container topnav">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <ul class="nav navbar-nav navbar-right">
+                    <li>  
+                         <a class="navbar-brand topnav" href="index">
+                            <img src="~/img/LogoAT.png" alt="Adaptive Technlogy logo" style="width:40px;height:40px;border:0" />
+                          </a>
+                     </li>
+                    <li>
+                        <a align="center">Adaptive <br /> Technology</a>
+                    </li>
+                </ul>
+                    </div>
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="~/Home/Index">Home</a>
+                    </li>
+                    <li>
+                        <a href="~/Admin/Index">Administration</a>
+                    </li>
+                </ul>
+            </div>
+            <!-- /.navbar-collapse -->
+        </div>
+        <!-- /.container -->
+    </nav>
+    
+    <div class="pre-container"></div>
+    @{ Html.RenderPartial("_Alerts"); }
+    @RenderBody()
+    <footer>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <ul class="list-inline">
+                        <li>
+                            <a href="~/Home/Index">Home</a>
+                        </li>
+                        <li class="footer-menu-divider">&sdot;</li>
+                        <li>
+                            <a href="~/Admin/Index">Administration</a>
+                        </li>
+                        <li class="pull-right"><p>&copy; @DateTime.Now.Year - Adaptive Technology</p></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

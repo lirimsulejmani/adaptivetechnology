@@ -1,0 +1,34 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title></title>
+</head>
+<body>
+    <div>
+        <ul id="products" />
+    </div>
+    <div>
+        <h2>Search by URL</h2>
+        <input type="text" value="www.google.com" id="urltxt"/>
+        <input type="button" value="Search" onclick="find();" />
+        <p id="resultContent" />
+    </div>
+
+    <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-2.0.3.min.js"></script>
+    <script>
+        var uri = 'http://localhost:2519/api/default';
+
+        function find() {
+            var urlText = $('#urltxt').val();
+            var data = {
+                url: urlText
+            };
+
+            $.getJSON(uri, data, function (result) {
+                //alert(result);
+                $("#resultContent").html(result);
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,71 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+
+   
+}
+<script type='text/javascript'>
+
+                                $( document ).ready(function() {
+                                    $("#accLink").hover(function () {
+                                        var fakedUri = $("#accLink").prop("href");
+                                        var route = fakedUri.replace("xxxx", $("#txtUrl").val());
+                                        $("#accLink").attr("href", route);
+
+                                    });
+                                    $("#accLink").click(function () {
+                                        var fakedUri = $("#accLink").prop("href");
+                                        var route = fakedUri.replace("xxxx", $("#txtUrl").val());
+                                        $("#accLink").attr("href", route);
+                                    });
+
+                                    $("#adpLink").hover(function () {
+                                        var fakedUri = $("#adpLink").prop("href");
+                                        var route = fakedUri.replace("xxxx", $("#txtUrl").val());
+                                        $("#adpLink").attr("href", route);
+                                    });
+                                    $("#adpLink").click(function () {
+                                        var fakedUri = $("#adpLink").prop("href");
+                                        var route = fakedUri.replace("xxxx", $("#txtUrl").val());
+                                        $("#adpLink").attr("href", route);
+                                    });
+
+                                });
+</script>
+
+<!-- Header -->
+<div class="intro-header">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="intro-message" align="center">
+                    <h1>Accessibility Page</h1>
+                    <h3>Put link of website for checking accessibility</h3>
+                    <hr class="intro-divider">
+                    <input type="text" class="form-control" style="width:400px;" id="txtUrl" name="txtUrl" value="http://www.w3schools.com" />
+                    <hr class="intro-divider">
+                     <ul class="list-inline intro-social-buttons">
+                        <li>
+                             @Html.ActionLink(" Check by WCAG",
+                                    "CheckAccessibility",
+                                    "Home",new  { url = "xxxx" },
+                                    new { @id = "accLink", @class = "btn btn-default btn-lg fa fa-cog",@style="font-size:19px;" })
+                         </li>
+                        <li>
+                             @Html.ActionLink(" Make Adaptation",
+                                    "MakeAdaptation",
+                                    "Home", new { url = "xxxx" },
+                                    new {@id="adpLink", @class = "btn btn-default btn-lg fa fa-globe", @style = "font-size:19px;" })
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /.container -->
+
+</div>
+<!-- /.intro-header -->
+<!-- Page Content -->
+
+

@@ -1,0 +1,63 @@
+﻿@model AT.Repository.Model.TextToReadHyperlink
+
+@{
+    ViewBag.Title = "Create";
+}
+
+
+
+@using (Html.BeginForm()) 
+{
+    @Html.AntiForgeryToken()
+
+    <div class="container body-content">
+    <div class="row">
+        <div class="col-lg-12">
+            <h2>Create</h2>
+            <div class="form-horizontal">
+                <h4>TextToReadHyperlink</h4>
+                <hr />
+                @Html.ValidationSummary(true)
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.HyperlinkText, new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.EditorFor(model => model.HyperlinkText)
+                        @Html.ValidationMessageFor(model => model.HyperlinkText)
+                    </div>
+                </div>
+
+                @*<div class="form-group">
+                    @Html.LabelFor(model => model.LanguageCode, new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.EditorFor(model => model.LanguageCode)
+                        @Html.ValidationMessageFor(model => model.LanguageCode)
+                    </div>
+                </div>*@
+                <div class="form-group">
+                    @Html.LabelFor(model => model.LanguageCode, new { @class = "control-label col-md-2" })
+                    <div class="col-md-2">
+                       
+                        @Html.DropDownList("LanguageDropDownList",
+                           EnumHelper.GetSelectList(typeof(AT.Repository.Enums.LanguageCodes)),
+                           "Select Language",
+                           new { @class = "form-control" })
+                    </div>
+                </div>
+             
+
+                <div class="form-group">
+                    <div class="col-md-offset-2 col-md-10">
+                        <input type="submit" value="Create" class="btn btn-default" />
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                @Html.ActionLink("Back to List", "Index")
+            </div>
+            </div>
+        </div>
+        </div>
+}
+

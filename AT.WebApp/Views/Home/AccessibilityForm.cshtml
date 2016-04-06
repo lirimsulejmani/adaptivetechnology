@@ -1,0 +1,130 @@
+﻿@{
+    Page.Title = "WCAG Results";
+}
+
+@{
+                string HtmlResult = "";
+                string SelectedWCAG = "WCAG2 - Level AA";
+
+                var url = Request.QueryString["url"];
+                // If all information is valid, create a new account
+                //may want more here for https, etc
+                System.Text.RegularExpressions.Regex regex = new System.Text.RegularExpressions.Regex(@"(http://)?(www\.)?\w+\.(com|net|edu|org)");
+
+                if (url == null)
+                {
+                    Response.Write("< div class='alert alert-danger' style='padding-bottom:1px;padding-top:1px;margin-top:0.1px; margin-bottom:0.1px;' role='alert'>web address must be given</div>");
+                }
+
+                if (!regex.IsMatch(url.ToString()))
+                {
+                    Response.Write("< div class='alert alert-danger' style='padding-bottom:1px;padding-top:1px;margin-top:0.1px; margin-bottom:0.1px;' role='alert'>web address is not correct</div>");
+
+                };
+
+                System.Xml.XmlDocument result = new System.Xml.XmlDocument();
+
+                try
+                {
+
+                    result = Check.GetAccessibilityResults(url, SelectedWCAG);
+                    HtmlResult = result.InnerXml.ToString();
+                }
+                catch (Exception ex)
+                {
+                    HtmlResult = "<div style='font-family:tahoma;font-size:8pt;background-color:red;color:white;font-weight:bold'>Error running checker : " + ex.Message + "</div>";
+                    return;
+                }
+
+                string[] lines;
+
+                if (result.SelectSingleNode("//status").InnerText == "PASS")
+                {
+                    return;
+                }
+                else
+                {
+                    lines = HtmlResult.Split(new string[] { "\n" }, StringSplitOptions.None);
+                    var resultList = result.SelectNodes("//results/result");
+                    var numOferrors = result.SelectSingleNode("//NumOfErrors").InnerText;
+                    var guidelines = result.SelectSingleNode("//guidelines/guideline").InnerText;
+
+                    int index = 1;
+
+                    //maincontent div
+                    HtmlResult = "<div style='padding-left:-10px;margin-left:-10px;'>";
+
+                    HtmlResult += @"<div class='alert alert-info' style='color:#3a87ad; font-family:tahoma;font-size:11pt;padding-bottom:0.5;margin-bottom:0.5px;'> Results: " + SelectedWCAG +
+                                  " <div style='float:right;'> <label style='font-family:tahoma;font-size:10pt;'>  Found Errors: " + numOferrors + "</label>";
+                    HtmlResult += "</div>  </div>";
+                    HtmlResult += @" <div style='padding-bottom:2px;'>
+                        <label style='color: #ffffff;text-align:center;background-color: #d9534f; border-color: #d43f3a;width:80px;height:25px;font-family:tahoma;font-size:9pt;'><p style='padding-top: 5px;'>Error</p></label>
+                        <label style='color: #ffffff;text-align:center; background-color: #f0ad4e; border-color: #eea236;width:80px;height:25px;font-family:tahoma;font-size:9pt;'><p style='padding-top: 5px;'>Error Code</p></label>
+                        <label style='color: #ffffff;text-align:center; background-color: #5bc0de; border-color: #46b8da;width:80px;height:25px;font-family:tahoma;font-size:9pt;'><p style='padding-top: 5px;'>Repair</p></label></div>";
+
+                    for (var i = resultList.Count; i-- > 0;)
+                    {
+                        System.Xml.XmlNode error = resultList[i];
+
+                        if (error.SelectSingleNode("resultType").InnerText.ToUpper() == "ERROR" || !Check.IgnoreCheckerWarnings)
+                        {
+
+                            var errorType = error.SelectSingleNode("resultType").InnerText;
+                            var errorLine = Int32.Parse(error.SelectSingleNode("lineNum").InnerText);
+                            var errorChar = Int32.Parse(error.SelectSingleNode("columnNum").InnerText);
+                            var errorMsg = error.SelectSingleNode("errorMsg").InnerText;
+                            var errorTitle = errorMsg.Substring(1 + errorMsg.LastIndexOf("="));
+                            var errorSourceCode = error.SelectSingleNode("errorSourceCode").InnerText;
+                            var errorRepair = error.SelectSingleNode("repair").InnerText;
+                            string chkHtml = string.Empty;
+
+                            if (errorChar > 0)
+                            {
+
+                                if (lines.Length > 1)
+                                {
+                                    //HtmlResult += "<li style='font-family:tahoma;font-size:12pt;background-color:CadetBlue;color:white;font-weight:bold;padding-left:20pt;list-style-type: none'>" + index + ". " + ErrorReporting.FixCodeTags(errorTitle) + " </li>";
+                                    //HtmlResult += "<li style='font-family:tahoma;font-size:9pt;background-color:BurlyWood;color:white;font-weight:bold;padding-left:30pt;list-style-type: none'> " + HttpUtility.HtmlEncode(errorSourceCode) + " </li>";
+                                    //HtmlResult += "<li style='font-family:tahoma;font-size:9pt;background-color:#339966;color:white;font-weight:bold;padding-left:30pt;list-style-type: none'> " + ErrorReporting.FixCodeTags(errorRepair) + " </li> <br />";
+
+                                    if (errorTitle.Contains("<code>alt</code>"))
+                                    {
+                                    HtmlResult += @"<br /> <div class='alert alert-danger' style='margin-left:7%;margin-right:8%;padding-bottom:1px;padding-top:1px;margin-top:0.1px; margin-bottom:0.1px;border-color: #b94a48;border-width: 2px;' role='alert'>
+                                                       <span class='glyphicon glyphicon-exclamation-sign' aria-hidden='true'></span>&nbsp;&nbsp;" + index + " . " + ErrorReporting.FixCodeTags(errorTitle) + " </div>";
+                                    HtmlResult += @"<div class='alert alert-warning' style='margin-left:7%;margin-right:8%;padding-bottom:1px;padding-top:1px;margin-top:0.1px; margin-bottom:0.1px;border-color:#c09853;border-width: 2px;'  role='alert'>
+                                                       <span class='glyphicon glyphicon-warning-sign' aria-hidden='true'></span>&nbsp;&nbsp;" + index + " . " + HttpUtility.HtmlEncode(errorSourceCode) + " </div>";
+                                    HtmlResult += @"<div class='alert alert-info' style='margin-left:7%;margin-right:8%;padding-bottom:1px;padding-top:1px;margin-top:0.1px; margin-bottom:0.1px;border-color:#3a87ad;border-width: 2px;'  role='alert'>
+                                                        <span class='glyphicon glyphicon-ok-sign' aria-hidden='true'></span>&nbsp;&nbsp;" + index + " . " + ErrorReporting.FixCodeTags(errorRepair) + " </div>";
+                                    }
+                                    else
+                                    {
+                                        HtmlResult += "<br /> <div class='alert alert-danger' style='margin-left:7%;margin-right:8%;padding-bottom:1px;padding-top:1px;margin-top:0.1px; margin-bottom:0.1px;' role='alert'>" + index + ". " + ErrorReporting.FixCodeTags(errorTitle) + " </div>";
+                                        HtmlResult += "<div class='alert alert-warning' style='margin-left:7%;margin-right:8%;padding-bottom:1px;padding-top:1px;margin-top:0.1px; margin-bottom:0.1px;'  role='alert'>" + index + ". " + HttpUtility.HtmlEncode(errorSourceCode) + " </div>";
+                                        HtmlResult += "<div class='alert alert-info' style='margin-left:7%;margin-right:8%;padding-bottom:1px;padding-top:1px;margin-top:0.1px; margin-bottom:0.1px;'  role='alert'>" + index + ". " + ErrorReporting.FixCodeTags(errorRepair) + " </div>";
+
+                                    }
+
+                                   index++;
+                               }
+
+                        }
+                 }
+
+            //End maincontent div
+            HtmlResult += "</div>";
+        }
+    }
+}
+
+
+    <a name="administration"></a>
+        <div class="container">
+          
+            <div class="row">
+                <div class="col-lg-12">
+                        @{
+                            @Html.Raw(@HtmlResult)
+                        }
+                </div>
+            </div>
+        </div>
